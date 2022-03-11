@@ -28,7 +28,7 @@ public class CircularProgressBar extends View {
 
 
 
-    private float mMaxSweepAngle = 360;         // Max degrees to sweep = full circle
+    private float mMaxSweepAngle = 360;         // Max degrees to sweep
     private int mStrokeWidth = 40;              // Width of outline
     private int mAnimationDuration = 1000;       // Animation duration for progress change
     private int mMaxProgress = 100;             // Max progress to use
@@ -54,6 +54,9 @@ public class CircularProgressBar extends View {
 
     public CircularProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+
+/* This defines the custom draw paint for circular progress */
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         classTimePaint=new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -68,15 +71,16 @@ public class CircularProgressBar extends View {
         initMeasurments();
         drawOutlineArc(canvas);
 
-//        if (mDrawText) {
-//            drawText(canvas);
-//        }
+
     }
 
     private void initMeasurments() {
         mViewWidth = getWidth();
         mViewHeight = getHeight();
     }
+
+    /* This fuction will draw circular progress bar */
+    /* for each catagory time draw seperately */
 
     private void drawOutlineArc(Canvas canvas) {
 
@@ -110,18 +114,6 @@ public class CircularProgressBar extends View {
         canvas.drawArc(outerOval, mStartAngle+classTimeSweepAngle+studyTimeSweepAngle, freeTimeSweepAngle, false, freeTimePaint);
     }
 
-//    private void drawText(Canvas canvas) {
-//        totalText_Paint.setTextSize(Math.min(mViewWidth, mViewHeight) / 8f);
-//
-//        totalText_Paint.setTextAlign(Paint.Align.CENTER);
-//        totalText_Paint.setStrokeWidth(0);
-//        totalText_Paint.setColor(mTextColor);
-//
-//        // Center text
-//        int xPos_total = (canvas.getWidth() / 2);
-//        int yPos_total = (int) ((canvas.getHeight() / 2.5) - ((totalText_Paint.descent() + mPaint.ascent()) / 2)) ;
-//        canvas.drawText("TOTAL", xPos_total, yPos_total, totalText_Paint);
-//    }
 
     private int calcProgressFromSweepAngle(float sweepAngle) {
         return (int) ((sweepAngle * mMaxProgress) / mMaxSweepAngle);
@@ -134,7 +126,7 @@ public class CircularProgressBar extends View {
 
 
 
-    public void setProgress(int progress) {
+    public void setProgress() {
         ValueAnimator animator_class = ValueAnimator.ofFloat(classTimeSweepAngle, calcSweepAngleFromProgress(classTimePercent));
         animator_class.setInterpolator(new DecelerateInterpolator());
         animator_class.setDuration(mAnimationDuration);
@@ -175,40 +167,23 @@ public class CircularProgressBar extends View {
     }
 
 
-    public void setProgressColor(int color) {
-        mProgressColor = color;
-        invalidate();
-    }
-
-    public void setProgressWidth(int width) {
-        mStrokeWidth = width;
-        invalidate();
-    }
-
-    public void setTextColor(int color) {
-        mTextColor = color;
-        invalidate();
-    }
-
-    public void showProgressText(boolean show) {
-        mDrawText = show;
-        invalidate();
-    }
-
-
-    public void useRoundedCorners(boolean roundedCorners) {
-        mRoundedCorners = roundedCorners;
-        invalidate();
-    }
-
+    /* Call this function to set values of each time progress */
 
     public void setProgressValue(int studytime,int classtime,int freetime)
     {
         float totaltime=studytime+classtime+freetime;
-        studyTimePercent=(int) (studytime/totaltime*100);
-        classTimePercent=(int) (classtime/totaltime*100);
-        freeTimePercent=(int) (freetime/totaltime*100);
-        setProgress(12);
+       if(totaltime==0)
+        {
+            studyTimePercent=0;
+            classTimePercent=0;
+            freeTimePercent=0;
+        }
+        else {
+            studyTimePercent=(int) (studytime/totaltime*100);
+            classTimePercent=(int) (classtime/totaltime*100);
+            freeTimePercent=(int) (freetime/totaltime*100);
+        }
+        setProgress();
 
 
     }
